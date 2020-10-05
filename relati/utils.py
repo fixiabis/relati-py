@@ -1,3 +1,5 @@
+import os
+
 from relati.color import (
     COLOR_RESET,
     COLOR_FG_BRIGHT_BLACK,
@@ -59,3 +61,13 @@ def printBoard(board):
             print(" %s |" % (color + gridSymbol + COLOR_RESET), end="")
 
         print()
+
+
+def clearTerminal():
+    width, height = map(int, os.popen("stty size").read().split(" "))
+
+    print(
+        "\033[0;0H" +
+        (" " * width + "\n") * (height - 1) +
+        " " * width
+    )
