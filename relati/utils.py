@@ -63,7 +63,7 @@ def printBoard(board):
         print()
 
 
-def clearTerminal():
+def clearScreen():
     width, height = map(int, os.popen("stty size").read().split(" "))
 
     print(
