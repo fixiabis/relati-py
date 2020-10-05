@@ -13,6 +13,8 @@ from relati.color import (
 class RelatiGame:
     def __init__(self, boardWidth, boardHeight):
         self.turn = 0
+        self.isOver = False
+        self.winner = -1
         self.board = GridBoard(boardWidth, boardHeight)
         self.rootGrids = [None] * 2
 
@@ -34,19 +36,4 @@ class RelatiGame:
             self.rootGrids[self.turn] = grid
 
         self.turn += 1
-        printBoard(self.board)
-        isOver, winner = getGameStatus(self.turn, self.board)
-
-        if isOver:
-            isDraw = winner == -1
-
-            if not isDraw:
-                print("game over, winner: %s" % (
-                    [COLOR_FG_RED, COLOR_FG_BLUE][winner] +
-                    ["O", "X"][winner] +
-                    COLOR_RESET
-                ))
-            else:
-                print("game over, draw")
-        else:
-            print()
+        self.isOver, self.winner = getGameStatus(self.turn, self.board)
