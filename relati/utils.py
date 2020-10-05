@@ -64,10 +64,13 @@ def printBoard(board):
 
 
 def clearScreen():
-    width, height = map(int, os.popen("stty size").read().split(" "))
+    try:
+        width, height = map(int, os.popen("stty size").read().split(" "))
 
-    print(
-        "\033[0;0H" +
-        (" " * width + "\n") * (height - 1) +
-        " " * width
-    )
+        print(
+            "\033[0;0H" +
+            (" " * width + "\n") * (height - 1) +
+            " " * width
+        )
+    except:
+        pass
