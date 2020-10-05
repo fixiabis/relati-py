@@ -1,6 +1,6 @@
 from relati.game import RelatiGame
-from relati.color import COLOR_FG_BLUE, COLOR_FG_RED, COLOR_RESET
 from relati.utils import printBoard, clearScreen
+from relati.color import COLOR_FG_RED, COLOR_FG_BLUE, COLOR_RESET
 
 clearScreen()
 game = RelatiGame(9, 9)
