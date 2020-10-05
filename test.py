@@ -1,79 +1,40 @@
-from relati.gridboard import GridBoard
-from relati.actions import placePiece
-from relati.rules import enablePieces, disablePieces, getGameStatus
-from relati.utils import printBoard
+from relati.game import RelatiGame
+from relati.color import COLOR_FG_BLUE, COLOR_FG_RED, COLOR_RESET
+from relati.utils import printBoard, clearScreen
 
-from relati.color import (
-    COLOR_RESET,
-    COLOR_FG_RED,
-    COLOR_FG_BLUE,
-)
+clearScreen()
+game = RelatiGame(9, 9)
 
-turn = 0
-board = GridBoard(9, 9)
-rootGrids = [None] * 2
+coors = [
+    *[[x, y] for y in range(9) for x in [0, 8, 1, 7, 2, 6, 3, 5]],
+    *[[4, y] for y in range(9)],
+    [-1, -1]
+]
 
-for y in range(9):
-    for x in [0, 8, 1, 7, 2, 6, 3, 5]:
-        symbol = turn % 2
-        grid = board.getGridAt(x, y)
-        isPlaced = placePiece(turn, grid, symbol)
+for coor in coors:
+    print("\033[0;0H", end="")
+    printBoard(game.board)
 
-        if not isPlaced:
-            continue
+    if game.isOver:
+        isDraw = game.winner == -1
 
-        if turn >= 2:
-            disablePieces(board)
-
-            for rootGrid in rootGrids:
-                enablePieces(rootGrid)
-        else:
-            rootGrids[turn] = grid
-
-        turn += 1
-        printBoard(board)
-        isOver, winner = getGameStatus(turn, board)
-
-        if isOver:
-            if winner != -1:
-                print("game over, winner: %s" % (
-                    [COLOR_FG_RED, COLOR_FG_BLUE][winner] +
-                    ["O", "X"][winner] +
-                    COLOR_RESET
-                ))
-            else:
-                print("game over, draw")
-        else:
-            print()
-
-for y in range(9):
-    symbol = turn % 2
-    grid = board.getGridAt(4, y)
-    isPlaced = placePiece(turn, grid, symbol)
-
-    if not isPlaced:
-        continue
-
-    if turn >= 2:
-        disablePieces(board)
-
-        for rootGrid in rootGrids:
-            enablePieces(rootGrid)
-    else:
-        rootGrids[turn] = grid
-
-    turn += 1
-    printBoard(board)
-    isOver, winner = getGameStatus(turn, board)
-
-    if isOver:
-        if winner != -1:
-            print("game over, winner: %s" % (
-                [COLOR_FG_RED, COLOR_FG_BLUE][winner] +
-                ["O", "X"][winner] +
+        if not isDraw:
+            print("winner is %s, game over" % (
+                [COLOR_FG_RED, COLOR_FG_BLUE][game.winner] +
+                ["O", "X"][game.winner] +
                 COLOR_RESET
             ))
         else:
-            print("game over, draw")
-    else:
-        print()
+            print("draw, game over")
+
+        break
+
+    [x, y] = coor
+
+    print("turn to %s: " % (
+        [COLOR_FG_RED, COLOR_FG_BLUE][game.turn % 2] +
+        ["O", "X"][game.turn % 2] +
+        COLOR_RESET
+    ), end="   \b\b\b%s" % (chr(x + 65) + str(y + 1)))
+
+    game.placePiece(x, y)
