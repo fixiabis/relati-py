@@ -20,8 +20,8 @@ class GridBoard:
         self.length = width * height
         self.grids = [None] * self.length
 
-        for x in range(height):
-            for y in range(width):
+        for x in range(width):
+            for y in range(height):
                 grid = Grid(x, y, self)
                 self.grids[grid.index] = grid
 
