@@ -6,7 +6,7 @@ clearScreen()
 game = RelatiGame(9, 9)
 
 while True:
-    print("\033[0;0H", end="")
+    print("\x1b[0;0H", end="")
     printBoard(game.board)
 
     if game.isOver:
