@@ -1,4 +1,5 @@
 import os
+import sys
 
 from relati.color import (
     COLOR_RESET,
@@ -64,13 +65,7 @@ def printBoard(board):
 
 
 def clearScreen():
-    try:
-        width, height = map(int, os.popen("stty size").read().split(" "))
-
-        print(
-            "\033[0;0H" +
-            (" " * width + "\n") * (height - 1) +
-            " " * width
-        )
-    except:
-        pass
+    if sys.platform.startswith("linux") or sys.platform.startswith("darwin"):
+        os.system("clear")
+    elif sys.platform.startswith("win32") or sys.platform.startswith("cygwin"):
+        os.system("clear")

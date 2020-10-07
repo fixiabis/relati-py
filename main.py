@@ -2,11 +2,10 @@ from relati.game import RelatiGame
 from relati.utils import printBoard, clearScreen
 from relati.color import COLOR_FG_RED, COLOR_FG_BLUE, COLOR_RESET
 
-clearScreen()
 game = RelatiGame(9, 9)
 
 while True:
-    print("\x1b[0;0H", end="")
+    clearScreen()
     printBoard(game.board)
 
     if game.isOver:
