@@ -68,4 +68,4 @@ def clearScreen():
     if sys.platform.startswith("linux") or sys.platform.startswith("darwin"):
         os.system("clear")
     elif sys.platform.startswith("win32") or sys.platform.startswith("cygwin"):
-        os.system("clear")
+        os.system("cls")
