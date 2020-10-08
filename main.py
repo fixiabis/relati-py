@@ -1,3 +1,4 @@
+import re
 from relati.game import RelatiGame
 from relati.utils import printBoard, clearScreen
 from relati.color import COLOR_FG_RED, COLOR_FG_BLUE, COLOR_RESET
@@ -26,9 +27,18 @@ while True:
         [COLOR_FG_RED, COLOR_FG_BLUE][game.turn % 2] +
         ["O", "X"][game.turn % 2] +
         COLOR_RESET
-    ), end="   \b\b\b")
+    ), end="    \b\b\b\b")
 
     coor = input().upper()
+
+    if coor == "EXIT":
+        break
+    
+    isValidCoor = re.search("^[A-Z][0-9]+$", coor) != None
+
+    if not isValidCoor:
+        break
+
     x = ord(coor[0]) - 65
     y = int(coor[1:]) - 1
     game.placePiece(x, y)
