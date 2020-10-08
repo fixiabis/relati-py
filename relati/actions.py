@@ -6,6 +6,7 @@ def placePiece(turn, grid, symbol):
     isAllRootPlaced = turn >= 2
 
     isGridPlaceable = (
+        grid != None
         isPlaceable(grid) and
         (not isAllRootPlaced or isRelatiPlaceable(grid, symbol))
     )
