@@ -3,7 +3,7 @@ from relati.game import RelatiGame
 from relati.utils import printBoard, clearScreen
 from relati.color import COLOR_FG_RED, COLOR_FG_BLUE, COLOR_RESET
 
-game = RelatiGame(9, 9)
+game = RelatiGame(13, 13)
 
 while True:
     clearScreen()
