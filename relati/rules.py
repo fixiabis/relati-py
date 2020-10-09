@@ -1,4 +1,4 @@
-from relati.routes import routes
+from relati.routes import routes, normalRoutes
 
 from relati.types import (
     isRelatiSymbol,
@@ -9,6 +9,7 @@ from relati.types import (
     isRelatiRepeatable,
     toRelatiRepeater,
     toRelatiReceiver,
+    toRelatiDeceased,
 )
 
 
@@ -54,6 +55,9 @@ def disablePieces(board):
 
 
 def enablePieces(grid):
+    if isRelatiDeceased(grid.body):
+        return
+
     for route in routes:
         [
             targetGrid,
@@ -77,6 +81,32 @@ def enablePieces(grid):
 
         targetGrid.body = toRelatiRepeater(targetGrid.body)
         enablePieces(targetGrid)
+
+
+def revokePieces(board):
+    for grid in board.grids:
+        if grid.body == None:
+            continue
+
+        opponentPiecesCount = 0
+
+        for route in normalRoutes:
+            [[x, y]] = route
+            opponentGrid = grid.getGridTo(x, y)
+
+            isOpponentGridHarmless = (
+                opponentGrid == None or
+                opponentGrid.body == None or
+                isRelatiSymbolEqual(opponentGrid.body, grid.body)
+            )
+
+            if isOpponentGridHarmless:
+                continue
+
+            opponentPiecesCount += 1
+
+        if opponentPiecesCount >= 4:
+            grid.body = toRelatiDeceased(grid.body)
 
 
 def getGameStatus(turn, board):
