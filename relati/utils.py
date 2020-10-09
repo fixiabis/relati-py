@@ -3,6 +3,7 @@ import sys
 
 from relati.color import (
     COLOR_RESET,
+    COLOR_BG_BRIGHT_BLACK,
     COLOR_FG_BRIGHT_BLACK,
     COLOR_BG_RED,
     COLOR_FG_RED,
@@ -17,6 +18,7 @@ from relati.types import (
     isRelatiSymbol,
     isRelatiLauncher,
     isRelatiRepeater,
+    isRelatiDeceased,
 )
 
 
@@ -58,6 +60,9 @@ def printBoard(board):
                         color = COLOR_BG_BLUE
                     elif isRelatiRepeater(grid.body):
                         color = COLOR_FG_BLUE
+
+                if isRelatiDeceased(grid.body):
+                    color = COLOR_BG_BRIGHT_BLACK
 
             print(" %s |" % (color + gridSymbol + COLOR_RESET), end="")
 
