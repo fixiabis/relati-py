@@ -37,7 +37,7 @@ while True:
     isValidCoor = re.search("^[A-Z][0-9]+$", coor) != None
 
     if not isValidCoor:
-        break
+        continue
 
     x = ord(coor[0]) - 65
     y = int(coor[1:]) - 1
