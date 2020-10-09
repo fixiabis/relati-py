@@ -97,6 +97,7 @@ def revokePieces(board):
             isOpponentGridHarmless = (
                 opponentGrid == None or
                 opponentGrid.body == None or
+                isRelatiDeceased(opponentGrid.body) or
                 isRelatiSymbolEqual(opponentGrid.body, grid.body)
             )
 
