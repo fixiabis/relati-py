@@ -31,7 +31,7 @@ while True:
 
     coor = input().upper()
 
-    if coor == "EXIT":
+    if coor in ["EXIT", "QUIT", "Q"]:
         break
     
     isValidCoor = re.search("^[A-Z][0-9]+$", coor) != None
