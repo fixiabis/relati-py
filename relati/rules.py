@@ -13,23 +13,20 @@ from relati.types import (
 
 
 def isPlaceable(grid):
-    return grid.body == None
+    return grid.body is None
 
 
 def isPenetrable(grid):
-    return grid.body == None or isRelatiDeceased(grid.body)
+    return grid.body is None or isRelatiDeceased(grid.body)
 
 
 def isRelatiPlaceable(grid, symbol):
     for route in routes:
-        [
-            sourceGrid,
-            *gridsInRoute
-        ] = map(lambda coor: grid.getGridTo(*coor), route)
+        [sourceGrid, *gridsInRoute] = [grid.getGridTo(x, y) for x, y in route]
 
         isSourceGridReliable = (
-            sourceGrid != None and
-            sourceGrid.body != None and
+            sourceGrid is not None and
+            sourceGrid.body is not None and
             isRelatiSymbol(sourceGrid.body, symbol) and
             isRelatiRepeatable(sourceGrid.body)
         )
@@ -49,20 +46,17 @@ def isRelatiPlaceable(grid, symbol):
 
 def disablePieces(board):
     for grid in board.grids:
-        if grid.body != None and isRelatiRepeater(grid.body):
+        if grid.body is not None and isRelatiRepeater(grid.body):
             grid.body = toRelatiReceiver(grid.body)
 
 
 def enablePieces(grid):
     for route in routes:
-        [
-            targetGrid,
-            *gridsInRoute
-        ] = map(lambda coor: grid.getGridTo(*coor), route)
+        [targetGrid, *gridsInRoute] = [grid.getGridTo(x, y) for x, y in route]
 
         isTargetGridPending = (
-            targetGrid != None and
-            targetGrid.body != None and
+            targetGrid is not None and
+            targetGrid.body is not None and
             isRelatiSymbolEqual(targetGrid.body, grid.body) and
             isRelatiReceiver(targetGrid.body)
         )
@@ -90,12 +84,10 @@ def getGameStatus(turn, board):
     while movablePlayersCount != 2:
         symbol = turn % 2
 
-        isGridPlaceable = any(map(
-            lambda grid:
-                isPlaceable(grid) and
-                isRelatiPlaceable(grid, symbol),
-            board.grids
-        ))
+        isGridPlaceable = any([
+            isPlaceable(grid) and isRelatiPlaceable(grid, symbol)
+            for grid in board.grids
+        ])
 
         if isGridPlaceable:
             if movablePlayersCount == 2 - 1:
