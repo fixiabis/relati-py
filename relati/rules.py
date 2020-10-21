@@ -79,7 +79,7 @@ def enablePieces(grid):
 
 def revokePieces(board):
     for grid in board.grids:
-        if grid.body == None:
+        if grid.body is None:
             continue
 
         opponentPiecesCount = 0
@@ -89,8 +89,8 @@ def revokePieces(board):
             opponentGrid = grid.getGridTo(x, y)
 
             isOpponentGridHarmless = (
-                opponentGrid == None or
-                opponentGrid.body == None or
+                opponentGrid is None or
+                opponentGrid.body is None or
                 isRelatiDeceased(opponentGrid.body) or
                 isRelatiSymbolEqual(opponentGrid.body, grid.body)
             )
