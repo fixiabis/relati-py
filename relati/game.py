@@ -1,8 +1,6 @@
 from relati.gridboard import GridBoard
 from relati.actions import placePiece
 from relati.rules import enablePieces, disablePieces, getGameStatus
-from relati.utils import printBoard
-from relati.color import COLOR_RESET, COLOR_FG_RED, COLOR_FG_BLUE
 
 
 class RelatiGame:
