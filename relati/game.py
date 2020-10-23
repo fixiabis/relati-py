@@ -23,9 +23,9 @@ class RelatiGame:
         if self.isAllRootPlaced:
             disablePieces(self.board)
             map(enablePieces, self.rootGrids)
-        elif self.turn == 2 - 1:
+        else:
             self.rootGrids.append(grid)
-            self.isAllRootPlaced = True
+            self.isAllRootPlaced = self.turn == 2 - 1
 
         self.turn += 1
         self.isOver, self.winner = getGameStatus(self.turn, self.board)
