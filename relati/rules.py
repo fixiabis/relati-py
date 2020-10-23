@@ -12,12 +12,16 @@ from relati.types import (
 )
 
 
+def isExists(grid):
+    return grid is not None
+
+
 def isPlaceable(grid):
     return grid.body is None
 
 
 def isPenetrable(grid):
-    return grid.body is None or isRelatiDeceased(grid.body)
+    return isPlaceable(grid) or isRelatiDeceased(grid.body)
 
 
 def isRelatiPlaceable(grid, symbol):
@@ -25,8 +29,8 @@ def isRelatiPlaceable(grid, symbol):
         [sourceGrid, *gridsInRoute] = [grid.getGridTo(x, y) for x, y in route]
 
         isSourceGridReliable = (
-            sourceGrid is not None and
-            sourceGrid.body is not None and
+            isExists(sourceGrid) and
+            not isPlaceable(sourceGrid) and
             isRelatiSymbol(sourceGrid.body, symbol) and
             isRelatiRepeatable(sourceGrid.body)
         )
@@ -46,7 +50,7 @@ def isRelatiPlaceable(grid, symbol):
 
 def disablePieces(board):
     for grid in board.grids:
-        if grid.body is not None and isRelatiRepeater(grid.body):
+        if not isPlaceable(grid) and isRelatiRepeater(grid.body):
             grid.body = toRelatiReceiver(grid.body)
 
 
@@ -55,8 +59,8 @@ def enablePieces(grid):
         [targetGrid, *gridsInRoute] = [grid.getGridTo(x, y) for x, y in route]
 
         isTargetGridPending = (
-            targetGrid is not None and
-            targetGrid.body is not None and
+            isExists(targetGrid) and
+            not isPlaceable(targetGrid) and
             isRelatiSymbolEqual(targetGrid.body, grid.body) and
             isRelatiReceiver(targetGrid.body)
         )

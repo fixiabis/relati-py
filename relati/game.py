@@ -9,24 +9,23 @@ class RelatiGame:
         self.isOver = False
         self.winner = -1
         self.board = GridBoard(boardWidth, boardHeight)
-        self.rootGrids = [None] * 2
+        self.rootGrids = []
+        self.isAllRootPlaced = False
 
     def placePiece(self, x, y):
         symbol = self.turn % 2
         grid = self.board.getGridAt(x, y)
-        isAllRootPlaced = self.turn >= 2
-        isPlaced = placePiece(self.turn, grid, symbol)
+        isPlaced = placePiece(grid, symbol, self.isAllRootPlaced)
 
         if not isPlaced:
             return
 
-        if isAllRootPlaced:
+        if self.isAllRootPlaced:
             disablePieces(self.board)
-
-            for rootGrid in self.rootGrids:
-                enablePieces(rootGrid)
-        else:
-            self.rootGrids[self.turn] = grid
+            map(enablePieces, self.rootGrids)
+        elif self.turn == 2 - 1:
+            self.rootGrids.append(grid)
+            self.isAllRootPlaced = True
 
         self.turn += 1
         self.isOver, self.winner = getGameStatus(self.turn, self.board)

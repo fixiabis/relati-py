@@ -1,12 +1,10 @@
-from relati.rules import isPlaceable, isRelatiPlaceable
+from relati.rules import isExists, isPlaceable, isRelatiPlaceable
 from relati.types import toRelatiRepeater
 
 
-def placePiece(turn, grid, symbol):
-    isAllRootPlaced = turn >= 2
-
+def placePiece(grid, symbol, isAllRootPlaced):
     isGridPlaceable = (
-        grid is not None and
+        isExists(grid) and
         isPlaceable(grid) and
         (not isAllRootPlaced or isRelatiPlaceable(grid, symbol))
     )
@@ -14,9 +12,9 @@ def placePiece(turn, grid, symbol):
     if not isGridPlaceable:
         return False
 
-    grid.body = symbol
-
     if isAllRootPlaced:
-        grid.body = toRelatiRepeater(grid.body)
+        grid.body = toRelatiRepeater(symbol)
+    else:
+        grid.body = symbol
 
     return True
