@@ -13,7 +13,6 @@ from relati.color import (
 from relati.types import (
     RELATI_SYMBOL_O,
     RELATI_SYMBOL_X,
-    getRelatiSymbol,
     isRelatiSymbol,
     isRelatiLauncher,
     isRelatiRepeater,
