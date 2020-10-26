@@ -1,4 +1,5 @@
 import os
+from relati.rules import isRelatiPlaceable
 import sys
 
 from relati.color import (
@@ -19,7 +20,7 @@ from relati.types import (
 )
 
 
-def printBoard(board):
+def printBoard(board, symbol):
     if board.height < 10:
         print("|   |", end="")
     else:
@@ -57,6 +58,9 @@ def printBoard(board):
                         color = COLOR_BG_BLUE
                     elif isRelatiRepeater(grid.body):
                         color = COLOR_FG_BLUE
+            elif isRelatiPlaceable(grid, symbol):
+                gridSymbol = "."
+                color = COLOR_FG_RED if symbol == 0 else COLOR_FG_BLUE                    
 
             print(" %s |" % (color + gridSymbol + COLOR_RESET), end="")
 

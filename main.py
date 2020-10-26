@@ -1,4 +1,5 @@
 import re
+from relati.evaluations import evaluatePlayersPoints
 from relati.game import RelatiGame
 from relati.utils import printBoard, clearScreen
 from relati.color import COLOR_FG_RED, COLOR_FG_BLUE, COLOR_RESET
@@ -7,7 +8,7 @@ game = RelatiGame(9, 9)
 
 while True:
     clearScreen()
-    printBoard(game.board)
+    printBoard(game.board, game.turn % 2)
 
     if game.isOver:
         isDraw = game.winner == -1
