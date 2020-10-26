@@ -22,7 +22,9 @@ class RelatiGame:
 
         if self.isAllRootPlaced:
             disablePieces(self.board)
-            map(enablePieces, self.rootGrids)
+            
+            for grid in self.rootGrids:
+                enablePieces(grid)
         else:
             self.rootGrids.append(grid)
             self.isAllRootPlaced = self.turn == 2 - 1
