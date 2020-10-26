@@ -1,55 +1,5 @@
-from relati.rules import isPlaceable, isRelatiPlaceable
+from relati.rules import isExists, isPlaceable, isRelatiPlaceable
 from relati.routes import normalRoutes
-
-
-def evaluatePlayerPoints(symbol, board):
-    points = 0
-    opponentSymbol = (symbol + 1) % 2
-    isGridPlaceable = map(isPlaceable, board.grids)
-
-    isGridRelatiPlaceableForSymbol = [
-        isRelatiPlaceable(grid, symbol) for grid in board.grids
-    ]
-
-    isGridRelatiPlaceableForOpponentSymbol = [
-        isRelatiPlaceable(grid, opponentSymbol) for grid in board.grids
-    ]
-
-    def getPoint(
-        isGridPlaceable,
-        isGridRelatiPlaceableForSymbol,
-        isGridRelatiPlaceableForOpponentSymbol,
-    ):
-        if not isGridPlaceable:
-            return 0
-
-        if isGridRelatiPlaceableForSymbol and isGridRelatiPlaceableForOpponentSymbol:
-            return 1
-
-        if (
-            isGridRelatiPlaceableForSymbol
-            and not isGridRelatiPlaceableForOpponentSymbol
-        ):
-            return 5
-
-        if (
-            not isGridRelatiPlaceableForSymbol
-            and isGridRelatiPlaceableForOpponentSymbol
-        ):
-            return -5
-
-        return 0
-
-    points = sum(
-        map(
-            getPoint,
-            isGridPlaceable,
-            isGridRelatiPlaceableForSymbol,
-            isGridRelatiPlaceableForOpponentSymbol,
-        )
-    )
-
-    return points
 
 
 def getPlaceableAreas(board):
@@ -60,15 +10,16 @@ def getPlaceableAreas(board):
             continue
 
         isGridInArea = False
-        nearbyGrids = [grid.getGridTo(x, y) for [[x, y]] in normalRoutes]
 
-        for nearbyGrid in nearbyGrids:
-            if nearbyGrid is None or not isPlaceable(nearbyGrid):
+        for [[x, y]] in normalRoutes:
+            nearbyGrid = grid.getGridTo(x, y)
+
+            if not isExists(nearbyGrid) or not isPlaceable(nearbyGrid):
                 continue
 
             for placeableArea in placeableAreas:
-                if nearbyGrid.index in placeableArea:
-                    placeableArea.append(grid.index)
+                if nearbyGrid in placeableArea:
+                    placeableArea.append(grid)
                     isGridInArea = True
                     break
 
@@ -76,28 +27,24 @@ def getPlaceableAreas(board):
                 break
 
         if not isGridInArea:
-            placeableArea = [grid.index]
+            placeableArea = [grid]
             placeableAreas.append(placeableArea)
 
     for placeableArea in placeableAreas:
         for otherPlaceableArea in placeableAreas:
-            if placeableArea is otherPlaceableArea:
+            if otherPlaceableArea is placeableArea:
                 continue
 
             isOtherPlaceableAreaShouldMerge = False
 
-            for otherGridIndex in otherPlaceableArea:
-                otherGrid = board.grids[otherGridIndex]
+            for otherGrid in otherPlaceableArea:
+                for [[x, y]] in normalRoutes:
+                    nearbyOtherGrid = otherGrid.getGridTo(x, y)
 
-                nearbyOtherGrids = [
-                    otherGrid.getGridTo(x, y) for [[x, y]] in normalRoutes
-                ]
-
-                for nearbyOtherGrid in nearbyOtherGrids:
-                    if nearbyOtherGrid is None or not isPlaceable(nearbyOtherGrid):
+                    if not isExists(nearbyOtherGrid) or not isPlaceable(nearbyOtherGrid):
                         continue
 
-                    if nearbyOtherGrid.index in placeableArea:
+                    if nearbyOtherGrid in placeableArea:
                         isOtherPlaceableAreaShouldMerge = True
                         break
 
@@ -107,9 +54,37 @@ def getPlaceableAreas(board):
             if isOtherPlaceableAreaShouldMerge:
                 placeableArea.extend(otherPlaceableArea)
                 otherPlaceableArea.clear()
-    
-    for placeableArea in placeableAreas:
-        if len(placeableArea) == 0:
-            placeableAreas.remove(placeableArea)
+
+    placeableAreas = [placeableArea for placeableArea in placeableAreas if len(placeableArea) != 0]
 
     return placeableAreas
+
+
+def evaluatePlayersPoints(board):
+    placeableAreas = getPlaceableAreas(board)
+    isPlaceableAreasForPlayers = [[False, False] for _ in placeableAreas]
+    placeableGridsCountForPlayers = [0, 0]
+    pointsForPlayers = [0, 0]
+
+    for placeableAreaIndex in range(len(placeableAreas)):
+        placeableArea = placeableAreas[placeableAreaIndex]
+
+        for grid in placeableArea:
+            for symbol in range(2):
+                if isRelatiPlaceable(grid, symbol):
+                    isPlaceableAreasForPlayers[placeableAreaIndex][symbol] = True
+                    placeableGridsCountForPlayers[symbol] += 1
+
+    for placeableAreaIndex in range(len(placeableAreas)):
+        placeableArea = placeableAreas[placeableAreaIndex]
+        isPlaceableAreaForPlayers = isPlaceableAreasForPlayers[placeableAreaIndex]
+
+        if isPlaceableAreaForPlayers[0] and not isPlaceableAreaForPlayers[1]:
+            pointsForPlayers[0] += len(placeableArea) * 10
+        elif isPlaceableAreaForPlayers[1] and not isPlaceableAreaForPlayers[0]:
+            pointsForPlayers[1] += len(placeableArea) * 10
+
+    pointsForPlayers[0] += placeableGridsCountForPlayers[0]
+    pointsForPlayers[1] += placeableGridsCountForPlayers[1]
+
+    return pointsForPlayers
