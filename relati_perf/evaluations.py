@@ -64,7 +64,20 @@ def getPlaceableAreas(board):
     return placeableAreas
 
 
+def getPieceCode(board):
+    return ''.join([
+        str(0 if grid.symbol is None else (grid.symbol | grid.status) + 1)
+        for grid in board.grids
+    ])
+
+cachedPlayersPoints = {}
+
 def evaluatePlayersPoints(board):
+    pieceCode = getPieceCode(board)
+
+    if pieceCode in cachedPlayersPoints:
+        return cachedPlayersPoints[pieceCode]
+
     placeableAreas = getPlaceableAreas(board)
     isPlaceableAreasForPlayers = [[False, False] for _ in placeableAreas]
     placeableGridsCountForPlayers = [0, 0]
@@ -91,13 +104,15 @@ def evaluatePlayersPoints(board):
     pointsForPlayers[0] += placeableGridsCountForPlayers[0]
     pointsForPlayers[1] += placeableGridsCountForPlayers[1]
 
+    cachedPlayersPoints[pieceCode] = pointsForPlayers
+
     return pointsForPlayers
 
 
 def evaluatePlayerPoints(board, symbol, depth, isPlayerTurn=True, alpha=-100000, beta=100000):
-    if depth == 0:
-        [oPoints, xPoints] = evaluatePlayersPoints(board)
+    [oPoints, xPoints] = evaluatePlayersPoints(board)
 
+    if depth == 0:
         if symbol == 0:
             return oPoints - xPoints
         else:
