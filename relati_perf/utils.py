@@ -63,21 +63,6 @@ def printBoard(board, symbol):
                 gridSymbol = "."
                 color = COLOR_FG_RED if symbol == 0 else COLOR_FG_BLUE
 
-                placePiece(grid, symbol, True)
-                reEnablePieces(board)
-
-                gridSymbol = str(
-                    evaluatePlayerPoints(board, symbol, 2)
-                )
-
-                gridSymbol = " " * (3 - len(gridSymbol)) + gridSymbol
-
-                grid.symbol = None
-                reEnablePieces(board)
-
-                print("%s|" % (color + gridSymbol + COLOR_RESET), end="")
-                continue
-
             print(" %s |" % (color + gridSymbol + COLOR_RESET), end="")
 
         print()

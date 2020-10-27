@@ -1,4 +1,4 @@
-from relati.types import RELATI_RECEIVER
+from relati.types import RELATI_RECEIVER, RELATI_REPEATER
 from relati_perf.actions import placePiece
 from relati_perf.rules import isPlaceable, isRelatiPlaceable, reEnablePieces
 
@@ -118,6 +118,11 @@ def evaluatePlayerPoints(board, symbol, depth, isPlayerTurn=True, alpha=-100000,
         else:
             return xPoints - oPoints
 
+    statusOfGrids = [
+        grid.status        
+        for grid in board.grids   
+    ]
+
     if isPlayerTurn:
         maxPlayerPoints = -100000
 
@@ -125,7 +130,8 @@ def evaluatePlayerPoints(board, symbol, depth, isPlayerTurn=True, alpha=-100000,
             if not isRelatiPlaceable(grid, symbol):
                 continue
 
-            placePiece(grid, symbol, True)
+            grid.symbol = symbol
+            grid.status = RELATI_REPEATER
             reEnablePieces(board)
 
             playerPoints = evaluatePlayerPoints(
@@ -136,7 +142,9 @@ def evaluatePlayerPoints(board, symbol, depth, isPlayerTurn=True, alpha=-100000,
             alpha = max(alpha, maxPlayerPoints)
 
             grid.symbol = None
-            reEnablePieces(board)
+            
+            for grid in board.grids:
+                grid.status = statusOfGrids[grid.index]
 
             if beta <= alpha:
                 break
@@ -149,7 +157,8 @@ def evaluatePlayerPoints(board, symbol, depth, isPlayerTurn=True, alpha=-100000,
             if not isRelatiPlaceable(grid, (symbol + 1) % 2):
                 continue
 
-            placePiece(grid, (symbol + 1) % 2, True)
+            grid.symbol = (symbol + 1) % 2
+            grid.status = RELATI_REPEATER
             reEnablePieces(board)
 
             playerPoints = evaluatePlayerPoints(
@@ -160,9 +169,41 @@ def evaluatePlayerPoints(board, symbol, depth, isPlayerTurn=True, alpha=-100000,
             beta = min(beta, minPlayerPoints)
 
             grid.symbol = None
-            reEnablePieces(board)
+
+            for grid in board.grids:
+                grid.status = statusOfGrids[grid.index]
 
             if beta <= alpha:
                 break
 
         return minPlayerPoints
+
+def evaluatePlayerNextStep(board, symbol, depth):
+    highestPoints = -100001
+    gridOfHighestPoints = None
+
+    statusOfGrids = [
+        grid.status        
+        for grid in board.grids
+    ]
+
+    for grid in board.grids:
+        if not isRelatiPlaceable(grid, symbol):
+            continue
+
+        grid.symbol = symbol
+        grid.status = RELATI_REPEATER
+        reEnablePieces(board)
+
+        points = evaluatePlayerPoints(board, symbol, 2)
+
+        if points > highestPoints:
+            highestPoints = points
+            gridOfHighestPoints = grid
+
+        grid.symbol = None
+
+        for grid in board.grids:
+            grid.status = statusOfGrids[grid.index]
+
+    return gridOfHighestPoints
